@@ -1,0 +1,7 @@
+backend/__pycache__/
+backend/.pytest_cache/
+backend/best_regnet.pth
+frontend/.next/
+frontend/.env.local
+frontend/coverage/
+frontend/node_modules/

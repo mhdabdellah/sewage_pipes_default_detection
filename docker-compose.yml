@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  flask-api:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend/best_regnet.pth:/app/best_regnet.pth:ro
+    environment:
+      MODEL_PATH: /app/best_regnet.pth
+      FLASK_ENV: production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  nextjs-app:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      FLASK_API_URL: http://flask-api:5000
+    depends_on:
+      flask-api:
+        condition: service_healthy
+    restart: unless-stopped
