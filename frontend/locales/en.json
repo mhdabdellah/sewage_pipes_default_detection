@@ -5,7 +5,9 @@
     "lightMode": "Light Mode",
     "darkMode": "Dark Mode",
     "changeTheme": "Change theme",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "brandName": "PipeVision",
+    "brandSub": "Defect Intelligence"
   },
   "Dashboard": {
     "title": "PipeVision Dashboard",
@@ -18,10 +20,10 @@
     "analysisPending": "Graph and action advice will be prepared when the analysis starts."
   },
   "Prediction": {
-    "ROOT_INTRUSION": "Root Intrusion",
-    "SEDIMENT_BLOCKAGE": "Sediment Blockage",
-    "STRUCTURAL_CRACK": "Structural Crack",
-    "NORMAL": "Normal",
+    "Root Intrusion": "Root Intrusion",
+    "Sediment Blockage": "Sediment Blockage",
+    "Structural Crack": "Structural Crack",
+    "Normal": "Normal",
     "confidence": "Confidence",
     "probability": "Probability",
     "detectionResult": "Detection Result",
@@ -57,7 +59,9 @@
     "errorSize": "File size must be less than 10MB.",
     "errorNoImage": "Select an image first for analysis.",
     "errorApi": "API request failed.",
-    "errorPreview": "Failed to create image preview."
+    "errorPreview": "Failed to create image preview.",
+    "errorConfig": "Configuration error.",
+    "errorService": "Prediction service is unavailable."
   },
   "History": {
     "title": "Archive",

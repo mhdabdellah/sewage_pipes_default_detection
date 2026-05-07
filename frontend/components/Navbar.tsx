@@ -54,8 +54,8 @@ export default function Navbar(): JSX.Element {
             </svg>
           </span>
           <span>
-            <span className="block text-lg font-semibold tracking-[0.18em] text-slate-100 uppercase">PipeVision</span>
-            <span className="block text-xs uppercase tracking-[0.4em] text-slate-400">Defect Intelligence</span>
+            <span className="block text-lg font-semibold tracking-[0.18em] text-slate-100 uppercase">{t("Common.brandName")}</span>
+            <span className="block text-xs uppercase tracking-[0.4em] text-slate-400">{t("Common.brandSub")}</span>
           </span>
         </Link>
 

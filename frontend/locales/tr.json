@@ -5,7 +5,9 @@
     "lightMode": "Aydinlik Mod",
     "darkMode": "Karanlik Mod",
     "changeTheme": "Tema degistir",
-    "unknown": "Bilinmeyen"
+    "unknown": "Bilinmeyen",
+    "brandName": "PipeVision",
+    "brandSub": "Defect Intelligence"
   },
   "Dashboard": {
     "title": "PipeVision Dashboard",
@@ -18,10 +20,10 @@
     "analysisPending": "Analiz baslatildiginda grafik ve aksiyon tavsiyesi hazirlanacak."
   },
   "Prediction": {
-    "ROOT_INTRUSION": "Kok Girisi",
-    "SEDIMENT_BLOCKAGE": "Tortu Tikanmasi",
-    "STRUCTURAL_CRACK": "Yapisal Catlak",
-    "NORMAL": "Normal",
+    "Root Intrusion": "Kok Girisi",
+    "Sediment Blockage": "Tortu Tikanmasi",
+    "Structural Crack": "Yapisal Catlak",
+    "Normal": "Normal",
     "confidence": "Guven",
     "probability": "Olasilik",
     "detectionResult": "Tespit Sonucu",
@@ -57,7 +59,9 @@
     "errorSize": "Dosya boyutu 10MB'dan kucuk olmali.",
     "errorNoImage": "Analiz icin once bir goruntu secin.",
     "errorApi": "API istegi basarisiz oldu.",
-    "errorPreview": "Goruntu onizlemesi olusturulamadi."
+    "errorPreview": "Goruntu onizlemesi olusturulamadi.",
+    "errorConfig": "Konfigurasyon hatasi.",
+    "errorService": "Tahmin servisi su an kullanilamiyor."
   },
   "History": {
     "title": "Arsiv",

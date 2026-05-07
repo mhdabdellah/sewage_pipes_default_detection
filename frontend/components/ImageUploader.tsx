@@ -108,7 +108,16 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
         | null;
 
       if (!response.ok || !payload || "error" in payload) {
-        throw new Error(payload && "error" in payload && payload.error ? payload.error : t("Uploader.errorApi"));
+        let errorKey = "Uploader.errorApi";
+        const apiError = payload && "error" in payload ? payload.error : "";
+        
+        if (apiError === "FLASK_API_URL is not configured.") {
+          errorKey = "Uploader.errorConfig";
+        } else if (apiError === "Prediction service is unavailable.") {
+          errorKey = "Uploader.errorService";
+        }
+        
+        throw new Error(t(errorKey));
       }
 
       const predictionData = payload as Omit<PredictionResult, "timestamp" | "imagePreview">;

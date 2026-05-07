@@ -1,6 +1,6 @@
 import type { PredictionResult } from "@/types";
 
-export const CLASS_NAMES = ["ROOT_INTRUSION", "SEDIMENT_BLOCKAGE", "STRUCTURAL_CRACK"];
+export const CLASS_NAMES = ["Root Intrusion", "Sediment Blockage", "Structural Crack"];
 export const HISTORY_STORAGE_KEY = "pipevision_history";
 
 type ClassMeta = {
@@ -11,17 +11,17 @@ type ClassMeta = {
 
 const CLASS_META: Record<number, ClassMeta> = {
   0: {
-    badgeLabelKey: "ROOT_INTRUSION",
+    badgeLabelKey: "Root Intrusion",
     badgeClassName: "bg-red-500 text-white",
     recommendationKey: "recommendationRoot"
   },
   1: {
-    badgeLabelKey: "SEDIMENT_BLOCKAGE",
+    badgeLabelKey: "Sediment Blockage",
     badgeClassName: "bg-yellow-500 text-slate-950",
     recommendationKey: "recommendationSediment"
   },
   2: {
-    badgeLabelKey: "STRUCTURAL_CRACK",
+    badgeLabelKey: "Structural Crack",
     badgeClassName: "bg-blue-500 text-white",
     recommendationKey: "recommendationCrack"
   }
