@@ -1,58 +1,55 @@
 import type { PredictionResult } from "@/types";
 
-export const CLASS_NAMES = ["Root Intrusion", "Sediment Blockage", "Structural Cracks"];
+export const CLASS_NAMES = ["ROOT_INTRUSION", "SEDIMENT_BLOCKAGE", "STRUCTURAL_CRACK"];
 export const HISTORY_STORAGE_KEY = "pipevision_history";
 
 type ClassMeta = {
-  badgeLabel: string;
+  badgeLabelKey: string;
   badgeClassName: string;
-  recommendation: string;
+  recommendationKey: string;
 };
 
 const CLASS_META: Record<number, ClassMeta> = {
   0: {
-    badgeLabel: "Kok Girisi",
+    badgeLabelKey: "ROOT_INTRUSION",
     badgeClassName: "bg-red-500 text-white",
-    recommendation: "30 gun icinde kok kesme islemini planlayin."
+    recommendationKey: "recommendationRoot"
   },
   1: {
-    badgeLabel: "Tortu Tikanmasi",
+    badgeLabelKey: "SEDIMENT_BLOCKAGE",
     badgeClassName: "bg-yellow-500 text-slate-950",
-    recommendation: "14 gun icinde yuksek basincli temizlik planlayin."
+    recommendationKey: "recommendationSediment"
   },
   2: {
-    badgeLabel: "Yapisal Catlakar",
+    badgeLabelKey: "STRUCTURAL_CRACK",
     badgeClassName: "bg-blue-500 text-white",
-    recommendation: "Acil yapisal degerlendirme gereklidir."
+    recommendationKey: "recommendationCrack"
   }
 };
 
 export function getClassMeta(classId: number): ClassMeta {
   return (
     CLASS_META[classId] ?? {
-      badgeLabel: "Bilinmeyen Sinif",
+      badgeLabelKey: "unknownClass",
       badgeClassName: "bg-slate-600 text-white",
-      recommendation: "Sonucu manuel olarak gozden gecirin."
+      recommendationKey: "recommendationUnknown"
     }
   );
 }
 
-export function getConfidenceLabel(confidence: number): string {
-  if (confidence > 0.9) {
-    return "Yuksek Guven";
-  }
-  if (confidence >= 0.7) {
-    return "Orta Guven";
-  }
-  return "Dusuk Guven";
+export function getConfidenceLabelKey(confidence: number): string {
+  if (confidence > 0.9) return "highConfidence";
+  if (confidence >= 0.7) return "mediumConfidence";
+  return "lowConfidence";
 }
 
 export function formatConfidence(confidence: number): string {
   return `${(confidence * 100).toFixed(1)}%`;
 }
 
-export function formatTimestamp(timestamp: string): string {
-  return new Intl.DateTimeFormat("tr-TR", {
+export function formatTimestamp(timestamp: string, locale: string = "en"): string {
+  const languageTag = locale === "tr" ? "tr-TR" : "en-US";
+  return new Intl.DateTimeFormat(languageTag, {
     dateStyle: "medium",
     timeStyle: "short"
   }).format(new Date(timestamp));

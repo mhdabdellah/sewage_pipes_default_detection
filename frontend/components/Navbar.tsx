@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslation } from "@/lib/TranslationContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const THEME_STORAGE_KEY = "pipevision_theme";
 
@@ -12,6 +14,7 @@ function applyTheme(theme: "dark" | "light"): void {
 }
 
 export default function Navbar(): JSX.Element {
+  const { t } = useTranslation();
   const pathname = usePathname();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
@@ -56,32 +59,41 @@ export default function Navbar(): JSX.Element {
           </span>
         </Link>
 
-        <div className="flex items-center gap-3">
-          <Link
-            href="/"
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
-              pathname === "/" ? "bg-teal-500 text-slate-950" : "text-slate-300 hover:bg-slate-800 hover:text-teal-300"
-            }`}
-          >
-            Dashboard
-          </Link>
-          <Link
-            href="/history"
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
-              pathname === "/history"
-                ? "bg-teal-500 text-slate-950"
-                : "text-slate-300 hover:bg-slate-800 hover:text-teal-300"
-            }`}
-          >
-            Gecmis
-          </Link>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
+                pathname === "/" ? "bg-teal-500 text-slate-950" : "text-slate-300 hover:bg-slate-800 hover:text-teal-300"
+              }`}
+            >
+              {t("Common.dashboard")}
+            </Link>
+            <Link
+              href="/history"
+              className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
+                pathname === "/history"
+                  ? "bg-teal-500 text-slate-950"
+                  : "text-slate-300 hover:bg-slate-800 hover:text-teal-300"
+              }`}
+            >
+              {t("Common.history")}
+            </Link>
+          </div>
+
+          <div className="h-6 w-px bg-slate-800" />
+
+          <LanguageSwitcher />
+
+          <div className="h-6 w-px bg-slate-800" />
+
           <button
             type="button"
             onClick={toggleTheme}
-            aria-label="Tema degistir"
+            aria-label={t("Common.changeTheme")}
             className="rounded-full border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-200 transition-all duration-300 hover:border-teal-500 hover:text-teal-300 dark:border-slate-700 dark:bg-slate-900"
           >
-            {theme === "dark" ? "Aydinlik Mod" : "Karanlik Mod"}
+            {theme === "dark" ? t("Common.lightMode") : t("Common.darkMode")}
           </button>
         </div>
       </nav>

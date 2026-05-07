@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import { useTranslation } from "@/lib/TranslationContext";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 
 import type { PredictionResult } from "@/types";
@@ -12,16 +14,8 @@ type ImageUploaderProps = {
   onLoading: (loading: boolean) => void;
 };
 
-function readFileAsDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
-    reader.onerror = () => reject(new Error("Goruntu onizlemesi olusturulamadi."));
-    reader.readAsDataURL(file);
-  });
-}
-
 export default function ImageUploader({ onResult, onLoading }: ImageUploaderProps): JSX.Element {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -30,16 +24,25 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
   const [hasResult, setHasResult] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const readFileAsDataUrl = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+      reader.onerror = () => reject(new Error(t("Uploader.errorPreview")));
+      reader.readAsDataURL(file);
+    });
+  };
+
   const showError = (message: string): void => {
     setErrorMessage(message);
   };
 
   const validateFile = (file: File): string | null => {
     if (!ACCEPTED_TYPES.has(file.type)) {
-      return "Sadece JPEG, PNG veya WEBP dosyalari yukleyebilirsiniz.";
+      return t("Uploader.errorFormat");
     }
     if (file.size > MAX_FILE_SIZE) {
-      return "Dosya boyutu 10MB'dan kucuk olmali.";
+      return t("Uploader.errorSize");
     }
     return null;
   };
@@ -51,11 +54,15 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
       return;
     }
 
-    const dataUrl = await readFileAsDataUrl(file);
-    setSelectedFile(file);
-    setPreviewUrl(dataUrl);
-    setHasResult(false);
-    setErrorMessage(null);
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      setSelectedFile(file);
+      setPreviewUrl(dataUrl);
+      setHasResult(false);
+      setErrorMessage(null);
+    } catch (err) {
+      showError(err instanceof Error ? err.message : t("Uploader.errorPreview"));
+    }
   };
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
@@ -78,7 +85,7 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
 
   const handleSubmit = async (): Promise<void> => {
     if (!selectedFile || !previewUrl) {
-      showError("Analiz icin once bir goruntu secin.");
+      showError(t("Uploader.errorNoImage"));
       return;
     }
 
@@ -101,11 +108,13 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
         | null;
 
       if (!response.ok || !payload || "error" in payload) {
-        throw new Error(payload && "error" in payload && payload.error ? payload.error : "API istegi basarisiz oldu.");
+        throw new Error(payload && "error" in payload && payload.error ? payload.error : t("Uploader.errorApi"));
       }
 
+      const predictionData = payload as Omit<PredictionResult, "timestamp" | "imagePreview">;
+
       const result: PredictionResult = {
-        ...payload,
+        ...predictionData,
         timestamp: new Date().toISOString(),
         imagePreview: previewUrl
       };
@@ -113,7 +122,7 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
       onResult(result);
       setHasResult(true);
     } catch (error) {
-      showError(error instanceof Error ? error.message : "API istegi basarisiz oldu.");
+      showError(error instanceof Error ? error.message : t("Uploader.errorApi"));
     } finally {
       setIsSubmitting(false);
       onLoading(false);
@@ -142,11 +151,9 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
       ) : null}
 
       <div className="mb-6">
-        <p className="text-sm uppercase tracking-[0.35em] text-teal-300">Goruntu Girdisi</p>
-        <h2 className="mt-2 text-2xl font-semibold text-slate-50">Boru goruntusunu yukleyin</h2>
-        <p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">
-          Surukle-birak ya da dosya seciminden sonra modeli calistirin. Desteklenen formatlar JPEG, PNG ve WEBP.
-        </p>
+        <p className="text-sm uppercase tracking-[0.35em] text-teal-300">{t("Uploader.title")}</p>
+        <h2 className="mt-2 text-2xl font-semibold text-slate-50">{t("Uploader.heading")}</h2>
+        <p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">{t("Uploader.description")}</p>
       </div>
 
       <input
@@ -155,7 +162,7 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
         type="file"
         accept="image/jpeg,image/png,image/webp"
         className="hidden"
-        aria-label="Goruntu sec"
+        aria-label={t("Uploader.selectFile")}
         onChange={(event) => {
           void handleFileChange(event);
         }}
@@ -178,16 +185,19 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
       >
         {previewUrl ? (
           <div className="relative w-full overflow-hidden rounded-2xl border border-slate-800">
-            <img
+            <Image
               src={previewUrl}
-              alt="Secilen goruntu onizlemesi"
+              alt={t("Uploader.dropImage")}
+              width={800}
+              height={320}
               className="h-[320px] w-full object-cover transition-all duration-300"
+              unoptimized
             />
             {isSubmitting ? (
               <div className="absolute inset-0 flex items-center justify-center bg-slate-950/70">
                 <div className="flex items-center gap-3 rounded-full border border-teal-500/40 bg-slate-950/80 px-5 py-3 text-sm text-teal-200 shadow-glow">
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-teal-400 border-t-transparent" />
-                  Analiz yapiliyor
+                  {t("Uploader.analyzing")}
                 </div>
               </div>
             ) : null}
@@ -208,8 +218,8 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
                 <path d="M4 16.5v1a2.5 2.5 0 0 0 2.5 2.5h11a2.5 2.5 0 0 0 2.5-2.5v-1" strokeLinecap="round" />
               </svg>
             </div>
-            <p className="text-lg font-medium text-slate-100">Goruntuyu bu alana birakin</p>
-            <p className="mt-2 text-sm text-slate-400">ya da secim penceresini acmak icin asagidaki dugmeyi kullanin</p>
+            <p className="text-lg font-medium text-slate-100">{t("Uploader.dropImage")}</p>
+            <p className="mt-2 text-sm text-slate-400">{t("Uploader.orUseButton")}</p>
           </>
         )}
       </div>
@@ -220,7 +230,7 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
           onClick={() => inputRef.current?.click()}
           className="rounded-full border border-slate-700 bg-slate-950 px-5 py-3 text-sm font-medium text-slate-200 transition-all duration-300 hover:border-teal-500 hover:text-teal-300"
         >
-          Dosya Sec
+          {t("Uploader.selectFile")}
         </button>
         <button
           type="button"
@@ -230,7 +240,7 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
           disabled={!selectedFile || isSubmitting}
           className="rounded-full bg-teal-500 px-5 py-3 text-sm font-semibold text-slate-950 transition-all duration-300 hover:bg-teal-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
         >
-          Goruntu Analiz Et
+          {t("Uploader.analyzeImage")}
         </button>
         {hasResult ? (
           <button
@@ -238,7 +248,7 @@ export default function ImageUploader({ onResult, onLoading }: ImageUploaderProp
             onClick={handleReset}
             className="rounded-full border border-slate-700 px-5 py-3 text-sm font-medium text-slate-300 transition-all duration-300 hover:border-slate-500 hover:text-slate-100"
           >
-            Reset
+            {t("Uploader.reset")}
           </button>
         ) : null}
       </div>

@@ -26,7 +26,7 @@ class MockFileReader {
   readAsDataURL(): void {
     this.result = "data:image/mock;base64,preview";
     if (this.onload) {
-      this.onload({ target: this } as ProgressEvent<FileReader>);
+      this.onload({ target: this } as unknown as ProgressEvent<FileReader>);
     }
   }
 }
